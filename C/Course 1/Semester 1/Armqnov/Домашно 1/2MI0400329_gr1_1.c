@@ -17,7 +17,7 @@ int main()
     
     if ((y >= 1 && y <= 2) && (x >= -1 && x <= 1)) //проверка за покрив само правоъгълна част
     {
-        position = 1;
+        puts("Blue");
     }
     
     //проверка за покрив само триъгълни части, използвайки коефициент на подобие на
@@ -28,27 +28,27 @@ int main()
     double b = 0.6 * k; //страна на триъг. от точката
     if ((y >= 1 && y <= 2) && (x >= (-1 - b) && x <= -1))
     {
-        position = 1;
+        puts("Blue");
     }
     else if ((y >= 1 && y <= 2) && (x >= 1 && x <= (1 + b)))
     {
-        position = 1;
+        puts("Blue");
     }
     else if ((y >= 0 && y <= 0.8) && (x >= -0.9 && x <= -0.6)) //проверка за врата
     {
-        position = 2;
+        puts("Green");
     }
     else if ((y >= 0.5 && y <= 0.8) && (x >= 0.5 && x <= 0.9)) //проверка за прозорец
     {
-        position = 3;
+        puts("Light blue");
     }
     else if ((y >= 2 && y <= 2.3) && (x >= 0.6 && x <= 0.8)) //проверка за комин
     {
-        position = 4;
+        puts("Brown");
     }
     else if ((y >= 0 && y <= 1) && (x >= -1 && x <= 1)) //преоверка за основна част на къщата
     {
-        position = 5;
+        puts("Gray");
     }
     
     //проверка за луна:
@@ -57,34 +57,13 @@ int main()
     double lengthOO2 = sqrt((x - (-0.2)) * (x - (-0.2)) + (y - 2.8) * (y - 2.8)); //дължина от точка до център на отрязана окръжност
     if (lengthOO1 <= 0.4 && lengthOO2 >= 0.7)
     {
-        position = 6;
+        puts("Yellow");
+    }
+    else //точката е извън къщата и луната
+    {
+        puts("White");
     }
     
-    switch (position)
-    {
-        case 1:
-            puts("Blue");
-            break;
-        case 2:
-            puts("Green");
-            break;
-        case 3:
-            puts("Light blue");
-            break;
-        case 4:
-            puts("Brown");
-            break;
-        case 5:
-            puts("Gray");
-            break;
-        case 6:
-            puts("Yellow");
-            break;
-        default:
-            puts("White");
-            break;
-    }
-
     return 0;
 }
 
