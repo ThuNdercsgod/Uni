@@ -18,7 +18,10 @@ int main()
     int firstDig, secondDig, thirdDig, fourthDig;
     int bigDig, smallDig;
 
-    if (num < 10)
+    //най-голямата разлика между произволни цифри на числото е разликата
+    //между най-голямата цифра и най-малката цифра на числото
+
+    if (num < 10) //едноцифрено число
     {
         puts("The number is single digit, so");
         puts("The largest difference between 2 digits of the number is:");
@@ -26,7 +29,7 @@ int main()
 
         return 0;
     }
-    else if (num < 100)
+    else if (num < 100) //двуцифрено число
     {
         firstDig = num / 10;
         secondDig = num % 10;
@@ -35,7 +38,7 @@ int main()
 
         smallDig = (firstDig < secondDig)? firstDig : secondDig;
     }
-    else if (num < 1000)
+    else if (num < 1000) //трицифрено число
     {
         firstDig = num / 100;
         secondDig = (num / 10) % 10;
@@ -47,7 +50,7 @@ int main()
         smallDig = (firstDig < secondDig)? firstDig : secondDig;
         smallDig = (smallDig < thirdDig)? smallDig : thirdDig;
     }
-    else
+    else //четирицифрено число
     {
         firstDig = num / 1000;
         secondDig = (num / 100) % 10;
