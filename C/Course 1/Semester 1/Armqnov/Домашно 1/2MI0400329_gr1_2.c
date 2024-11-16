@@ -4,16 +4,17 @@ int main()
 {
     int num;
 
-    do
+    puts("Enter a non-negative four digit integer:");
+    if (scanf("%d", &num) != 1)
     {
-        puts("Enter a non-negative four digit integer:");
-        if (scanf("%d", &num) != 1)
-        {
-            puts("Invalid input");
-            return 1;
-        }
+        puts("Invalid input");
+        return 1;
     }
-    while (num < 0 || num > 9999);
+    else if (num < 0 || num > 9999)
+    {
+        puts("Invalid input");
+        return 1;
+    }
 
     int firstDig, secondDig, thirdDig, fourthDig;
     int bigDig, smallDig;
