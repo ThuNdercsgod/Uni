@@ -4,15 +4,12 @@ int main()
 {
     int num;
 
-    puts("Enter a non-negative four digit integer:");
-    if (scanf("%d", &num) != 1)
+    puts("Enter a non-negative integer:");
+    if (scanf("%d", &num) != 1
+        || (num < 0 || num > 9999))
     {
         puts("Invalid input");
-        return 1;
-    }
-    else if (num < 0 || num > 9999)
-    {
-        puts("Invalid input");
+
         return 1;
     }
 
