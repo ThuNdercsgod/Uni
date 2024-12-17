@@ -18,87 +18,90 @@ void printArray(double arr[], unsigned size);
 
 int main()
 {
-    double tran[CAPACITY] = { 4, 3, -5, 2.3, -1.2, 0 };
+    // double tran[CAPACITY] = { 4, 3, -5, 2.3, -1.2, 0 };
 
-    puts("The array is:");
-    printArray(tran, CAPACITY);
-    puts("");
+    // puts("The array is:");
+    // printArray(tran, CAPACITY);
+    // puts("");
 
-    transform(tran, CAPACITY);
+    // transform(tran, CAPACITY);
 
-    puts("The transformed array is:");
-    printArray(tran, CAPACITY);
-    puts("");
+    // puts("The transformed array is:");
+    // printArray(tran, CAPACITY);
+    // puts("");
 
-    double check[CAPACITY] = { 4, 4, 1, 2, 3, 3, 3, 0 };
+    // double check[CAPACITY] = { 4, 4, 1, 2, 3, 3, 3, 0 };
 
-    puts("The array is:");
-    printArray(check, CAPACITY);
-    puts("");
+    // puts("The array is:");
+    // printArray(check, CAPACITY);
+    // puts("");
 
-    (checkNext(check, CAPACITY) == 1)? puts("There are repeating elements next to eachother") : 
-    puts("There are no repeating elements next to eachother");
-    puts("");
+    // (checkNext(check, CAPACITY) == 1)? puts("There are repeating elements next to eachother") : 
+    // puts("There are no repeating elements next to eachother");
+    // puts("");
  
-    removeNext(check, CAPACITY);
+    // removeNext(check, CAPACITY);
 
-    puts("When removing the same elements next to eachother, the array is:");
-    printArray(check, CAPACITY);
-    puts("");
+    // puts("When removing the same elements next to eachother, the array is:");
+    // printArray(check, CAPACITY);
+    // puts("");
 
-    double set[CAPACITY] = { 0, 1, 2, 1, 3, 4, 1, 0, 0, 2, 0 };
+    // double set[CAPACITY] = { 0, 1, 2, 1, 3, 4, 1, 0, 0, 2, 0 };
 
-    puts("The array is:");
-    printArray(set, CAPACITY);
-    puts("");
+    // puts("The array is:");
+    // printArray(set, CAPACITY);
+    // puts("");
 
-    if (isSet(set, CAPACITY) == 0)
-    {
-        puts("The array is not a set");
-        puts("");
+    // if (isSet(set, CAPACITY) == 0)
+    // {
+    //     puts("The array is not a set");
+    //     puts("");
 
-        toSet(set, CAPACITY);
-        sortArray(set, CAPACITY);
+    //     toSet(set, CAPACITY);
+    //     sortArray(set, CAPACITY);
 
-        puts("When remade into a set, the array is:");
-        printArray(set, CAPACITY);
-        puts("");
-    }
-    else
-    {
-        puts("The array is a set\n");
-    }
+    //     puts("When remade into a set, the array is:");
+    //     printArray(set, CAPACITY);
+    //     puts("");
+    // }
+    // else
+    // {
+    //     puts("The array is a set\n");
+    // }
 
-    double arrUnion[BIGCAPACITY] = { 0 };
+    // double arrUnion[BIGCAPACITY] = { 0 };
 
-    unionOfArrays(check, set, arrUnion, BIGCAPACITY);
+    // unionOfArrays(check, set, arrUnion, BIGCAPACITY);
 
-    puts("The Union of the arrays");
-    printArray(check, CAPACITY);
-    puts("and");
-    printArray(set, CAPACITY);
-    puts("is:");
+    // puts("The Union of the arrays");
+    // printArray(check, CAPACITY);
+    // puts("and");
+    // printArray(set, CAPACITY);
+    // puts("is:");
     
-    printArray(arrUnion, BIGCAPACITY);
-    puts("");
+    // printArray(arrUnion, BIGCAPACITY);
+    // puts("");
+
+    double inter1[CAPACITY] = { 3, 5, 2, 1, 4, 6, 0 };
+    double inter2[CAPACITY] = { 7, 10, 12, 11, 8, 9, 0 };
 
     double arrIntersection[BIGCAPACITY] = { 0 };
 
-    intersection(check, set, arrIntersection, BIGCAPACITY);
-
     puts("The intersection of the arrays");
-    printArray(check, CAPACITY);
+    printArray(inter1, CAPACITY);
     puts("and");
-    printArray(set, CAPACITY);
+    printArray(inter2, CAPACITY);
     puts("is:");
-    
+
+    intersection(inter1, inter2, arrIntersection, BIGCAPACITY);
+
     printArray(arrIntersection, BIGCAPACITY);
     puts("");
 
     return 0;
 }
 
-void transform(double arr[], unsigned size)
+void transform(double arr[], unsigned size) //частен случай трансформация
 {
     for (int i = 0; i < size; ++i)
     {
@@ -117,7 +120,7 @@ void transform(double arr[], unsigned size)
     }
 }
 
-int checkNext(double arr[], unsigned size)
+int checkNext(double arr[], unsigned size) //проверка за 2 последователни елемента
 {
     for (int i = 1; i < (size); ++i)
     {
@@ -130,7 +133,7 @@ int checkNext(double arr[], unsigned size)
     return 0;
 }
 
-void removeNext(double arr[], unsigned size)
+void removeNext(double arr[], unsigned size) //маха последователни елементи
 {
     for (int i = 1; i < (size); ++i)
     {
@@ -142,7 +145,7 @@ void removeNext(double arr[], unsigned size)
     sortArray(arr, size);
 }
 
-int isSet(double arr[], unsigned size)
+int isSet(double arr[], unsigned size) //проверка за повторения
 {
     for (int i = 0; i < (size - 1); ++i)
     {
@@ -157,7 +160,7 @@ int isSet(double arr[], unsigned size)
     return 1;
 }
 
-void toSet(double arr[], unsigned size)
+void toSet(double arr[], unsigned size) //маха повторения
 {
     for (int i = 0; i < (size - 1); ++i)
     {
@@ -172,7 +175,7 @@ void toSet(double arr[], unsigned size)
     sortArray(arr, size);
 }
 
-void unionOfArrays(double arr1[], double arr2[], double arrUnion[], unsigned size)
+void unionOfArrays(double arr1[], double arr2[], double arrUnion[], unsigned size) //общи елементи без повторения
 {
     int size1 = 0, size2 = 0;
 
@@ -198,9 +201,17 @@ void unionOfArrays(double arr1[], double arr2[], double arrUnion[], unsigned siz
     toSet(arrUnion, size);
 }
 
-void intersection(double arr1[], double arr2[], double arrIntersection[], unsigned size)
+void intersection(double arr1[], double arr2[], double arrIntersection[], unsigned size) //сечение без повторения
 {
     int size1 = 0, size2 = 0;
+    
+    toSet(arr1, size);
+    printArray(arr1, size);
+    puts("");
+    toSet(arr2, size);
+    printArray(arr2, size);
+    puts("");
+
 
     while (!(fabs(arr1[size1]) < EPS))
     {
@@ -224,8 +235,9 @@ void intersection(double arr1[], double arr2[], double arrIntersection[], unsign
     sortArray(arrIntersection, size);
 }
 
-void sortArray(double arr[], unsigned size)
+void sortArray(double arr[], unsigned size) //сортира по големина и слага празни елементи накрая
 {
+    // маха нули
     for (int i = 0; i < size; ++i)
     {
         int j = 0;
@@ -235,12 +247,28 @@ void sortArray(double arr[], unsigned size)
         }
 
         if (!(fabs(arr[i]) < EPS))
-        arr[j] = arr[i];
-        arr[i] = 0;
+        {
+            arr[j] = arr[i];
+            arr[i] = 0;
+        }
+    }
+
+    // подрежда останалите елементи
+    for (int i = 0; i < size; ++i)
+    {
+        for (int j = 0; j < size; ++j)
+        {
+            if (arr[j] < arr[i] && i < j && !(fabs(arr[j]) < EPS))
+            {
+                int n = arr[i];
+                arr[i] = arr[j];
+                arr[j] = n;
+            }
+        }
     }
 }
 
-void printArray(double arr[], unsigned size)
+void printArray(double arr[], unsigned size) //принтира всеки елемент
 {
     for (int i = 0; i < size; ++i)
     {
