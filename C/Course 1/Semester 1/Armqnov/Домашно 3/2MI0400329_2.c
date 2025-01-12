@@ -12,7 +12,7 @@ void analyzeWords(char *string, int *numberOfWords, int *largestWord, int size);
 void isolateWords(char *string, char **words, int size, int largestWord);
 int **repeatsOfWord(char **words, int *numberOfWords);
 int **compress(char *string, int *numWords, int size);
-void clearRepeating(int **words, int **wordRepeats, int *numberOfWords);
+void clearRepeating(char **words, int **wordRepeats, int *numberOfWords);
 void decompress(int **words, int **string, int **wordRepeats, int *numberOfWords);
 
 int main()
@@ -249,7 +249,7 @@ int **compress(char *string, int *numWords, int size)
     *numWords = numberOfWords;
 }
 
-void clearRepeating(int **words, int **wordRepeats, int *numberOfWords)
+void clearRepeating(char **words, int **wordRepeats, int *numberOfWords)
 {
     for (int i = 0; i < (*numberOfWords - 1); ++i)
     {
@@ -271,5 +271,5 @@ void clearRepeating(int **words, int **wordRepeats, int *numberOfWords)
 
 void decompress(int **words, int **string, int **wordRepeats, int *numberOfWords)
 {
-    clearRepeating(words, wordRepeats, &numberOfWords);
+    clearRepeating(words, wordRepeats, numberOfWords);
 }
