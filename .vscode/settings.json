@@ -53,5 +53,7 @@
         "text_encoding": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp"
-    }
+    },
+    "terminal.integrated.tabs.defaultColor": null,
+    "terminal.integrated.tabs.defaultIcon": "console"
 }

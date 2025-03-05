@@ -42,7 +42,7 @@ namespace
     void printMenuBuilding()
     {
         std::cout << "Building types:" << std::endl;
-        for (int i = minType; i < maxType; i++)
+        for (int i = minType; i <= maxType; i++)
         {
             std::cout << i << ". " << buildingTypes[i] << std::endl;
         }
@@ -52,7 +52,7 @@ namespace
     void printMenuEmergency()
     {
         std::cout << "Emergency levels:" << std::endl;
-        for (int i = EmergencyLevel::LOW; i < EmergencyLevel::HIGH; i++)
+        for (int i = EmergencyLevel::LOW; i <= EmergencyLevel::HIGH; i++)
         {
             std::cout << i << ". " << emergencyLevels[i] << std::endl;
         }
