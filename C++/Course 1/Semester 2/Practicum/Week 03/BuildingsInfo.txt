@@ -1,0 +1,5 @@
+[Building 1]
+Name: mama ti
+Type: Fire station
+Location: (4, 4)
+
