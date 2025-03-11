@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <cmath>
 #include "smartcity.hpp"
 
 int inputNumber()
@@ -44,4 +45,11 @@ int inputCoordinates()
     } while (!valid);
 
     return number;
+}
+
+double distanceBetweenPoints(int x1, int y1, int x2, int y2)
+{
+    double distance = sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+
+    return distance;
 }

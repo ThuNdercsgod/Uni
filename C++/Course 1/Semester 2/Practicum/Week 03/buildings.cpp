@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <cstring>
 #include "buildings.hpp"
 
 void BuildingsInfo::input(Building *building, int size)
@@ -10,11 +11,11 @@ void BuildingsInfo::input(Building *building, int size)
         std::cin.ignore();
         std::cin.getline(building[i].name, 32);
 
-        building[i].type = inputBuildingType();
+        building[i].type = BuildingsInfo::inputType();
 
-        std::cout << "Enter the x-coordinate of the building:" << std::endl;
+        std::cout << "Enter the x-coordinate of the building:";
         building[i].location.x = inputCoordinates();
-        std::cout << "Enter the y-coordinate of the building:" << std::endl;
+        std::cout << "Enter the y-coordinate of the building:";
         building[i].location.y = inputCoordinates();
 
         std::cout << "Enter the status of the bulding:" << std::endl;
@@ -62,6 +63,9 @@ bool BuildingsInfo::saveToFile(Building *building, int size)
         save << "[Building " << i + 1 << "]\n";
         save << "Name: " << building[i].name << "\n";
         save << "Type: " << buildingTypes[building[i].type] << "\n";
+        save << "Work state: " << building[i].status.workState << "\n";
+        save << "Power level: " << building[i].status.powerLevel << "\n";
+        save << "Occupation level: " << building[i].status.occupationLevel << "\n";
         save << "Location: (" << building[i].location.x << ", " << building[i].location.y << ")\n";
         save << "\n";
     }
@@ -71,7 +75,8 @@ bool BuildingsInfo::saveToFile(Building *building, int size)
     return true;
 }
 
-bool BuildingsInfo::loadFromFile(Building *building, int size)
+// TODO make it load the info from the file into a dynamic building
+std::ifstream BuildingsInfo::loadFromFile(Building *building, int size)
 {
     std::ifstream load("BuildingsInfo.txt");
 
@@ -79,17 +84,16 @@ bool BuildingsInfo::loadFromFile(Building *building, int size)
     {
         std::cout << "File opening error!" << std::endl;
 
-        return false;
+        return nullptr;
     }
 
-    load.close();
-
-    return true;
+    return load;
 }
+// TODO end
 
 bool BuildingsInfo::Search::isValidCriteria(int input)
 {
-    return (input >= BuildingsInfo::Search::Criteria::Name && input <= BuildingsInfo::Search::Criteria::Location);
+    return (input >= BuildingsInfo::Search::Criteria::NAME && input <= BuildingsInfo::Search::Criteria::LOCATION);
 }
 
 BuildingsInfo::Search::Criteria BuildingsInfo::Search::input()
@@ -117,46 +121,34 @@ BuildingsInfo::Search::Criteria BuildingsInfo::Search::input()
     return (BuildingsInfo::Search::Criteria)input;
 }
 
-bool BuildingsInfo::loadFromFile(Building *building, int size)
+bool BuildingsInfo::Search::inFile(Building *building, int size)
 {
-    std::ifstream load("BuildingsInfo.txt");
+    Building searchParameters;
+
+    std::ifstream load = BuildingsInfo::loadFromFile(building, size);
 
     if (!load.is_open())
     {
-        std::cout << "File opening error!" << std::endl;
-
         return false;
     }
 
-    if (!BuildingsInfo::Search::inFile(load))
-    {
-        return false;
-    }
-
-    load.close();
-
-    return true;
-}
-
-bool BuildingsInfo::Search::inFile(std::ifstream &load)
-{
     BuildingsInfo::Search::Criteria searchCriteria = BuildingsInfo::Search::input();
 
-    if (searchCriteria == BuildingsInfo::Search::Criteria::Name)
+    if (searchCriteria == BuildingsInfo::Search::Criteria::NAME)
     {
-        BuildingsInfo::Search::byName(load);
+        BuildingsInfo::Search::byName(load, searchParameters, building, size);
     }
-    else if (searchCriteria == BuildingsInfo::Search::Criteria::Type)
+    else if (searchCriteria == BuildingsInfo::Search::Criteria::TYPE)
     {
-        BuildingsInfo::Search::byType(load);
+        BuildingsInfo::Search::byType(load, searchParameters, building, size);
     }
-    else if (searchCriteria == BuildingsInfo::Search::Criteria::Location)
+    else if (searchCriteria == BuildingsInfo::Search::Criteria::LOCATION)
     {
-        BuildingsInfo::Search::byLocation(load);
+        BuildingsInfo::Search::byLocation(load, searchParameters, building, size);
     }
     else
     {
-        std::cout << "Input error!";
+        std::cout << "Searching error!" << std::endl;
 
         return false;
     }
@@ -164,16 +156,65 @@ bool BuildingsInfo::Search::inFile(std::ifstream &load)
     return true;
 }
 
-// TODO
-void BuildingsInfo::Search::byName(std::ifstream &load)
+void BuildingsInfo::Search::byName(std::ifstream &load, Building searchParameters, Building *building, int size)
 {
+    std::cout << "Enter the name of the building: ";
+    std::cin.ignore();
+    std::cin.getline(searchParameters.name, 32);
+
+    int buildingsCount = 0;
+    int nameLength = strlen(searchParameters.name);
+
+    for (int i = 0; i < size; i++)
+    {
+        if (strcmp(searchParameters.name, building[i].name) == 0)
+        {
+            buildingsCount++;
+        }
+    }
+
+    std::cout << "Amount of buildings named \"" << searchParameters.name << "\": " << buildingsCount << std::endl;
 }
 
-void BuildingsInfo::Search::byType(std::ifstream &load)
+void BuildingsInfo::Search::byType(std::ifstream &load, Building searchParameters, Building *building, int size)
 {
+    std::cout << "Searching for building types:" << std::endl;
+    searchParameters.type = BuildingsInfo::inputType();
+
+    int buildingsCount = 0;
+
+    for (int i = 0; i < size; i++)
+    {
+        if (searchParameters.type == building[i].type)
+        {
+            buildingsCount++;
+        }
+    }
+
+    std::cout << "Amount of buildings with type " << buildingTypes[searchParameters.type] << ": " << buildingsCount << std::endl;
 }
 
-void BuildingsInfo::Search::byLocation(std::ifstream &load)
+void BuildingsInfo::Search::byLocation(std::ifstream &load, Building searchParameters, Building *building, int size)
 {
+    std::cout << "Enter the x-coordinate of the point: ";
+    std::cin >> searchParameters.location.x;
+    std::cout << "Enter the y-coordinate of the point: ";
+    std::cin >> searchParameters.location.y;
+    std::cout << "Enter a search radius around this point: ";
+    int radius = inputNumber();
+
+    int buildingsCount = 0;
+
+    for (int i = 0; i < size; i++)
+    {
+        int distance = distanceBetweenPoints(building[i].location.x, building[i].location.y,
+                                             searchParameters.location.x, searchParameters.location.y);
+
+        if (distance <= radius)
+        {
+            buildingsCount++;
+        }
+    }
+
+    std::cout << "Amount of buildings in radius of " << radius << " from the point: " << buildingsCount << std::endl;
 }
-// TODO END

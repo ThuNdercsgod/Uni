@@ -6,12 +6,12 @@
 int main()
 {
     std::cout << "Enter the amount of buildings: ";
-    int size1 = inputNumber();
-    Building *building = new Building[size1];
+    int sizeBuilding = inputNumber();
+    Building *building = new Building[sizeBuilding];
 
     std::cout << "Enter the amount of events: ";
-    int size2 = inputNumber();
-    Event *event = new Event[size2];
+    int sizeEvent = inputNumber();
+    Event *event = new Event[sizeEvent];
 
     if (!building || !event)
     {
@@ -20,22 +20,22 @@ int main()
         return 1;
     }
 
-    BuildingsInfo::input(building, size1);
-    EventsInfo::input(event, size2);
+    BuildingsInfo::input(building, sizeBuilding);
+    EventsInfo::input(event, sizeEvent);
 
-    if (!BuildingsInfo::saveToFile(building, size1))
-    {
-        return 2;
-    }
-    if (!EventsInfo::saveToFile(event, size2))
-    {
-        return 2;
-    }
+    BuildingsInfo::saveToFile(building, sizeBuilding);
+    EventsInfo::saveToFile(event, sizeEvent);
+
+    BuildingsInfo::Search::inFile(building, sizeBuilding);
+    EventsInfo::Search::inFile(event, sizeEvent);
+
+    std::cout << "Finished!" << std::endl;
 
     // TODO in buldings.cpp and events.cpp
+    // TODO make them load info from the file onto a dynamic event/building
 
-    // printInfoBuilding(building, size1);
-    // printInfoEvent(event, size2);
+    // printInfoBuilding(building, sizeBuilding);
+    // printInfoEvent(event, sizeEvent);
 
     delete[] building;
     delete[] event;

@@ -1,76 +1,82 @@
 #include <iostream>
 #include "city_types.hpp"
 
-bool isValidBuildingType(int choice)
+namespace BuildingsInfo
 {
-    return (choice >= minType && choice <= maxType);
-}
-
-bool isValidEmergencyLevel(int choice)
-{
-    return (choice >= EmergencyLevel::LOW && choice <= EmergencyLevel::HIGH);
-}
-
-void printMenuBuilding()
-{
-    std::cout << "Building types:" << std::endl;
-    for (int i = minType; i <= maxType; i++)
+    bool isValidType(int choice)
     {
-        std::cout << i + 1 << ". " << buildingTypes[i] << std::endl;
+        return (choice >= BuildingType::RESIDENTIAL && choice <= BuildingType::FIRESTATION);
+    }
+
+    void printMenu()
+    {
+        std::cout << "Building types:" << std::endl;
+        for (int i = BuildingType::RESIDENTIAL; i <= BuildingType::FIRESTATION; i++)
+        {
+            std::cout << i + 1 << ". " << buildingTypes[i] << std::endl;
+        }
+    }
+
+    BuildingType inputType()
+    {
+        int input = -1;
+        bool valid = false;
+
+        BuildingsInfo::printMenu();
+        std::cout << "Enter the number representing the building type: ";
+        do
+        {
+            std::cin >> input;
+            input--;
+            valid = BuildingsInfo::isValidType(input);
+            if (!valid)
+            {
+                std::cout << "Wrong input! Try again:" << std::endl;
+                std::cin.clear();
+                std::cin.ignore();
+            }
+        } while (!valid);
+
+        return (BuildingType)input;
     }
 }
 
-void printMenuEvent()
+namespace EventsInfo
 {
-    std::cout << "Emergency levels:" << std::endl;
-    for (int i = EmergencyLevel::LOW; i <= EmergencyLevel::HIGH; i++)
+    bool isValidLevel(int choice)
     {
-        std::cout << i + 1 << ". " << emergencyLevels[i] << std::endl;
+        return (choice >= EmergencyLevel::LOW && choice <= EmergencyLevel::HIGH);
     }
-}
 
-BuildingType inputBuildingType()
-{
-    int input = -1;
-    bool valid = false;
-
-    printMenuBuilding();
-    std::cout << "Enter the number representing the building type: ";
-    do
+    void printMenu()
     {
-        std::cin >> input;
-        input--;
-        valid = isValidBuildingType(input);
-        if (!valid)
+        std::cout << "Emergency levels:" << std::endl;
+        for (int i = EmergencyLevel::LOW; i <= EmergencyLevel::HIGH; i++)
         {
-            std::cout << "Wrong input! Try again:" << std::endl;
-            std::cin.clear();
-            std::cin.ignore();
+            std::cout << i + 1 << ". " << emergencyLevels[i] << std::endl;
         }
-    } while (!valid);
+    }
 
-    return (BuildingType)input;
-}
-
-EmergencyLevel inputEmergencyLevel()
-{
-    int input = -1;
-    bool valid = false;
-
-    printMenuEvent();
-    std::cout << "Enter the number representing the emergency level: ";
-    do
+    EmergencyLevel inputLevel()
     {
-        std::cin >> input;
-        input--;
-        valid = isValidEmergencyLevel(input);
-        if (!valid)
-        {
-            std::cout << "Wrong input! Try again:" << std::endl;
-            std::cin.clear();
-            std::cin.ignore();
-        }
-    } while (!valid);
+        int input = -1;
+        bool valid = false;
 
-    return (EmergencyLevel)input;
+        EventsInfo::printMenu();
+        std::cout << "Enter the number representing the emergency level: ";
+        do
+        {
+            std::cin >> input;
+            input--;
+            valid = EventsInfo::isValidLevel(input);
+            if (!valid)
+            {
+                std::cout << "Wrong input! Try again:" << std::endl;
+                std::cin.clear();
+                std::cin.ignore();
+            }
+        } while (!valid);
+
+        return (EmergencyLevel)input;
+    }
 }

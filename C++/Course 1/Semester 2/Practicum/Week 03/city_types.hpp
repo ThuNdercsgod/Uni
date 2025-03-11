@@ -15,9 +15,6 @@ enum EmergencyLevel
     HIGH
 };
 
-const int minType = BuildingType::RESIDENTIAL;
-const int maxType = BuildingType::FIRESTATION;
-
 const char *const buildingTypes[] = {"Residential",
                                      "Hospital",
                                      "Police",
@@ -27,11 +24,16 @@ const char *const emergencyLevels[] = {"Low",
                                        "Medium",
                                        "High"};
 
-bool isValidBuildingType(int type);
-bool isValidEmergencyLevel(int emergency);
+namespace BuildingsInfo
+{
+    bool isValidType(int type);
+    void printMenu();
+    BuildingType inputType();
+}
 
-void printMenuBuilding();
-void printMenuEvent();
-
-BuildingType inputBuildingType();
-EmergencyLevel inputEmergencyLevel();
+namespace EventsInfo
+{
+    bool isValidLevel(int emergency);
+    void printMenu();
+    EmergencyLevel inputLevel();
+}

@@ -1,4 +1,5 @@
 #pragma once
+#include "city_types.hpp"
 #include "smartcity.hpp"
 
 struct BuildingStatus
@@ -21,27 +22,27 @@ namespace BuildingsInfo
     void input(Building *building, int size);
     void printInfo(Building *building, int size);
     bool saveToFile(Building *building, int size);
-    bool loadFromFile(Building *building, int size);
+    std::ifstream loadFromFile(Building *building, int size);
 
     namespace Search
     {
         enum Criteria
         {
-            Name,
-            Type,
-            Location
+            NAME,
+            TYPE,
+            LOCATION
         };
 
-        // const char *const criteriaName[] = {"Level",
-        //                         "Description",
-        //                         "Location"};
+        //* const char *const criteriaName[] = {"Level",
+        //*                        "Description",
+        //*                        "Location"};
 
         bool isValidCriteria(int input);
         Criteria input();
 
-        bool inFile(std::ifstream &load);
-        void byName(std::ifstream &load);
-        void byType(std::ifstream &load);
-        void byLocation(std::ifstream &load);
+        bool inFile(Building *building, int size);
+        void byName(std::ifstream &load, Building searchParameters, Building *building, int size);
+        void byType(std::ifstream &load, Building searchParameters, Building *building, int size);
+        void byLocation(std::ifstream &load, Building searchParameters, Building *building, int size);
     }
 }
