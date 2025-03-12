@@ -7,64 +7,124 @@ struct Students
     char firstName[128];
     char lastName[128];
     char email[256];
-    int fn[5];
+    int fn;
 };
 
-bool openFile(char const *file);
+void print(Students &student);
+std::ifstream loadFromFile(char const *fileName);
+bool printContent(char input[256], char const *fileName);
 
 int main()
 {
-    char command[6];
     char fileName[64];
     std::cout << "Open file:" << std::endl;
-    std::cin.getline(command, 5, ' ');
-
     std::cin.getline(fileName, 63);
 
-    if (!openFile(fileName))
+    char command[6];
+    char input[256];
+    std::cout << "Enter command:" << std::endl;
+    std::cin.getline(command, 6, ' ');
+    std::cin.ignore();
+    std::cin.getline(input, 255);
+
+    bool valid = true;
+    do
     {
-        return 1;
-    }
+        valid = true;
+        if (strcmp(command, "print") == 0)
+        {
+            if (!printContent(input, fileName))
+            {
+                valid = false;
+            }
+        }
+        else if (strcmp(command, "edit") == 0)
+        {
+        }
+        else if (strcmp(command, "save") == 0)
+        {
+        }
+        else
+        {
+            std::cout << "Wrong input! Try again:" << std::endl;
+            std::cin.clear();
+            std::cin.ignore();
+            valid = false;
+        }
+    } while (!valid);
 
     return 0;
 }
 
-bool printFile(char const *file, Students &student)
+void print(Students &student)
 {
-    std::ifstream print(file);
+    // TODO somethings wrong
+    std::cout << student.firstName << ", " << student.lastName << ", ";
+    std::cout << student.email << ", " << student.fn << std::endl;
+}
 
-    if (!print.is_open())
+std::ifstream loadFromFile(char const *fileName)
+{
+    std::ifstream load(fileName);
+
+    if (!load.is_open())
+    {
+        std::cout << "File opening error!" << std::endl;
+
+        return nullptr;
+    }
+
+    return load;
+}
+
+bool inputToFile(char const *fileName)
+{
+    std::ofstream input(fileName);
+
+    if (!input.is_open())
     {
         std::cout << "File opening error!" << std::endl;
 
         return false;
     }
 
-    char line;
-    do
-    {
-        std::cout << line;
-    } while (line != ',');
-
-    std::cout << std::endl;
-
-    print.close();
+    std::cout << "File successfully opened!" << std::endl;
 
     return true;
 }
 
-bool openFileInput(char const *fileName)
+bool printContent(char input[256], char const *fileName)
 {
-    std::ofstream input(fileName);
+    Students student;
 
-    if (!input.is_open())
+    std::ifstream load = loadFromFile(fileName);
+
+    if (!load.is_open())
     {
-        std::cout << "Opening file error!" << std::endl;
-
         return false;
     }
 
-    std::cout << "File successfully opened!" << std::endl;
+    // TODO FIX THIS
+    char lineBuffer[256];
+    load.getline(lineBuffer, sizeof(lineBuffer), ',');
+    strcpy(student.firstName, lineBuffer);
+    load.getline(lineBuffer, sizeof(lineBuffer), ' ');
+
+    load.getline(lineBuffer, sizeof(lineBuffer), ',');
+    strcpy(student.lastName, lineBuffer);
+    load.getline(lineBuffer, sizeof(lineBuffer), ' ');
+
+    load.getline(lineBuffer, sizeof(lineBuffer), ',');
+    sscanf(lineBuffer, "Email: %[^,]", &student.email);
+    load.getline(lineBuffer, sizeof(lineBuffer), ' ');
+
+    load.getline(lineBuffer, sizeof(lineBuffer));
+    sscanf(lineBuffer, "FN: %d", &student.fn);
+    // TODO END
+
+    load.close();
+
+    print(student);
 
     return true;
 }
