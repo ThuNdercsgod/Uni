@@ -24,7 +24,7 @@ void EventsInfo::printInfo(Event *event, int size)
 {
     if (size == 0)
     {
-        std::cout << "There are no EventsInfo!" << std::endl;
+        std::cout << "There are no Events!" << std::endl;
     }
     for (int i = 0; i < size; i++)
     {
@@ -60,21 +60,68 @@ bool EventsInfo::saveToFile(Event *event, int size)
     return true;
 }
 
-// TODO make it load the info from the file onto a dynamic event
-std::ifstream EventsInfo::loadFromFile(Event *event, int size)
+Event *EventsInfo::loadFromFile(int &sizeSearch)
 {
+    sizeSearch = 0;
     std::ifstream load("EventsInfo.txt");
 
     if (!load.is_open())
     {
         std::cout << "File opening error!" << std::endl;
-
         return nullptr;
     }
 
-    return load;
+    char lineBuffer[256];
+    char *line = lineBuffer;
+    while (load.getline(lineBuffer, 256))
+    {
+        if (strncmp(lineBuffer, "[Event", 6) == 0)
+        {
+            sizeSearch++;
+        }
+    }
+
+    Event *event = new (std::nothrow) Event[sizeSearch];
+    if (!event)
+    {
+        std::cout << "Memory allocation error!" << std::endl;
+        return nullptr;
+    }
+
+    load.clear();
+    load.seekg(0, std::ios::beg);
+
+    int i = 0;
+    while (load.getline(lineBuffer, 256) && i < sizeSearch)
+    {
+        if (strncmp(lineBuffer, "[Event", 6) == 0)
+        {
+            load.getline(lineBuffer, sizeof(lineBuffer));
+            sscanf(lineBuffer, "Description: %[^\n]", event[i].description);
+
+            load.getline(lineBuffer, sizeof(lineBuffer));
+            char level[32];
+            sscanf(lineBuffer, "Level: %[^\n]", level);
+            for (int j = 0; j < sizeof(emergencyLevels) / sizeof(emergencyLevels[0]); ++j)
+            {
+                if (strcmp(level, emergencyLevels[j]) == 0)
+                {
+                    event[i].emergencyLevel = (EmergencyLevel)j;
+                    break;
+                }
+            }
+
+            load.getline(lineBuffer, sizeof(lineBuffer));
+            sscanf(lineBuffer, "Location: (%d, %d)", &event[i].location.x, &event[i].location.y);
+
+            ++i;
+        }
+    }
+
+    load.close();
+
+    return event;
 }
-// TODO end
 
 bool EventsInfo::Search::isValidCriteria(int input)
 {
@@ -106,13 +153,12 @@ EventsInfo::Search::Criteria EventsInfo::Search::input()
     return (EventsInfo::Search::Criteria)input;
 }
 
-bool EventsInfo::Search::inFile(Event *event, int size)
+bool EventsInfo::Search::inFile(int &sizeSearch)
 {
+    Event *loadedEvent = EventsInfo::loadFromFile(sizeSearch);
     Event searchParameters;
 
-    std::ifstream load = EventsInfo::loadFromFile(event, size);
-
-    if (!load.is_open())
+    if (!loadedEvent)
     {
         return false;
     }
@@ -121,15 +167,15 @@ bool EventsInfo::Search::inFile(Event *event, int size)
 
     if (searchCriteria == EventsInfo::Search::Criteria::DESCRIPRION)
     {
-        EventsInfo::Search::byDescription(load, searchParameters, event, size);
+        EventsInfo::Search::byDescription(searchParameters, loadedEvent, sizeSearch);
     }
     else if (searchCriteria == EventsInfo::Search::Criteria::LEVEL)
     {
-        EventsInfo::Search::byLevel(load, searchParameters, event, size);
+        EventsInfo::Search::byLevel(searchParameters, loadedEvent, sizeSearch);
     }
     else if (searchCriteria == EventsInfo::Search::Criteria::LOCATION)
     {
-        EventsInfo::Search::byLocation(load, searchParameters, event, size);
+        EventsInfo::Search::byLocation(searchParameters, loadedEvent, sizeSearch);
     }
     else
     {
@@ -138,12 +184,13 @@ bool EventsInfo::Search::inFile(Event *event, int size)
         return false;
     }
 
-    load.close();
+    delete[] loadedEvent;
+    loadedEvent = nullptr;
 
     return true;
 }
 
-void EventsInfo::Search::byDescription(std::ifstream &load, Event searchParameters, Event *event, int size)
+void EventsInfo::Search::byDescription(Event searchParameters, Event *event, int sizeSearch)
 {
     std::cout << "Enter the description of the event: ";
     std::cin.ignore();
@@ -152,7 +199,7 @@ void EventsInfo::Search::byDescription(std::ifstream &load, Event searchParamete
     int eventsCount = 0;
     int nameLength = strlen(searchParameters.description);
 
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < sizeSearch; i++)
     {
         if (strcmp(searchParameters.description, event[i].description) == 0)
         {
@@ -163,14 +210,14 @@ void EventsInfo::Search::byDescription(std::ifstream &load, Event searchParamete
     std::cout << "Amount of events with description \"" << searchParameters.description << "\": " << eventsCount << std::endl;
 }
 
-void EventsInfo::Search::byLevel(std::ifstream &load, Event searchParameters, Event *event, int size)
+void EventsInfo::Search::byLevel(Event searchParameters, Event *event, int sizeSearch)
 {
     std::cout << "Searching for event emergency levels:" << std::endl;
     searchParameters.emergencyLevel = EventsInfo::inputLevel();
 
     int eventsCount = 0;
 
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < sizeSearch; i++)
     {
         if (searchParameters.emergencyLevel == event[i].emergencyLevel)
         {
@@ -182,7 +229,7 @@ void EventsInfo::Search::byLevel(std::ifstream &load, Event searchParameters, Ev
     std::cout << emergencyLevels[searchParameters.emergencyLevel] << ": " << eventsCount << std::endl;
 }
 
-void EventsInfo::Search::byLocation(std::ifstream &load, Event searchParameters, Event *event, int size)
+void EventsInfo::Search::byLocation(Event searchParameters, Event *event, int sizeSearch)
 {
     std::cout << "Enter the x-coordinate of the point: ";
     std::cin >> searchParameters.location.x;
@@ -193,7 +240,7 @@ void EventsInfo::Search::byLocation(std::ifstream &load, Event searchParameters,
 
     int eventsCount = 0;
 
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < sizeSearch; i++)
     {
         int distance = distanceBetweenPoints(event[i].location.x, event[i].location.y,
                                              searchParameters.location.x, searchParameters.location.y);

@@ -22,7 +22,7 @@ namespace BuildingsInfo
     void input(Building *building, int size);
     void printInfo(Building *building, int size);
     bool saveToFile(Building *building, int size);
-    std::ifstream loadFromFile(Building *building, int size);
+    Building *loadFromFile(int &sizeSearch);
 
     namespace Search
     {
@@ -40,9 +40,9 @@ namespace BuildingsInfo
         bool isValidCriteria(int input);
         Criteria input();
 
-        bool inFile(Building *building, int size);
-        void byName(std::ifstream &load, Building searchParameters, Building *building, int size);
-        void byType(std::ifstream &load, Building searchParameters, Building *building, int size);
-        void byLocation(std::ifstream &load, Building searchParameters, Building *building, int size);
+        bool inFile(int &sizeSearch);
+        void byName(Building searchParameters, Building *loadedBuilding, int sizeSearch);
+        void byType(Building searchParameters, Building *loadedBukding, int sizeSearch);
+        void byLocation(Building searchParameters, Building *loadedBuilding, int sizeSearch);
     }
 }

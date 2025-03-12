@@ -8,3 +8,7 @@ Description: bql
 Level: Low
 Location: (4, 4)
 
+[Event 3]
+Description: bashta ti
+Level: High
+Location: (3, 3)

@@ -14,7 +14,7 @@ namespace EventsInfo
     void input(Event *event, int size);
     void printInfo(Event *event, int size);
     bool saveToFile(Event *event, int size);
-    std::ifstream loadFromFile(Event *event, int size);
+    Event *loadFromFile(int &sizeSearch);
 
     namespace Search
     {
@@ -32,9 +32,9 @@ namespace EventsInfo
         bool isValidCriteria(int input);
         Criteria input();
 
-        bool inFile(Event *event, int size);
-        void byDescription(std::ifstream &load, Event searchParameters, Event *event, int size);
-        void byLevel(std::ifstream &load, Event searchParameters, Event *event, int size);
-        void byLocation(std::ifstream &load, Event searchParameters, Event *event, int size);
+        bool inFile(int &sizeSearch);
+        void byDescription(Event searchParameters, Event *loadedEvent, int sizeSearch);
+        void byLevel(Event searchParameters, Event *loadedEvent, int sizeSearch);
+        void byLocation(Event searchParameters, Event *loadedEvent, int sizeSearch);
     }
 }

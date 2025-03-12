@@ -26,13 +26,17 @@ int main()
     BuildingsInfo::saveToFile(building, sizeBuilding);
     EventsInfo::saveToFile(event, sizeEvent);
 
-    BuildingsInfo::Search::inFile(building, sizeBuilding);
-    EventsInfo::Search::inFile(event, sizeEvent);
+    int sizeSearchBuilding = 0;
+    if (!BuildingsInfo::Search::inFile(sizeSearchBuilding))
+    {
+        return 2;
+    }
 
-    std::cout << "Finished!" << std::endl;
-
-    // TODO in buldings.cpp and events.cpp
-    // TODO make them load info from the file onto a dynamic event/building
+    int sizeSearchEvent = 0;
+    if (!EventsInfo::Search::inFile(sizeSearchEvent))
+    {
+        return 2;
+    }
 
     // printInfoBuilding(building, sizeBuilding);
     // printInfoEvent(event, sizeEvent);
