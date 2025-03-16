@@ -12,12 +12,6 @@ enum Commands
     SAVE_AS
 };
 
-struct Test
-{
-    bool b;
-    int x;
-};
-
 const char *const commandsList[] = {"View",
                                     "Change",
                                     "Remove",
@@ -64,6 +58,7 @@ int main()
     checkCommand(fileName, sizeOfBuffer);
 
     delete[] text;
+    text = nullptr;
 
     return 0;
 }
@@ -223,6 +218,7 @@ bool view(const char *fileName, int size)
     std::cout << text << std::endl;
 
     delete[] text;
+    text = nullptr;
 
     load.close();
 
@@ -249,6 +245,7 @@ bool changeByte(const char *fileName, int size)
     {
         std::cout << "File opening error!" << std::endl;
         delete[] file;
+        file = nullptr;
         return false;
     }
 
@@ -265,12 +262,12 @@ bool changeByte(const char *fileName, int size)
     }
 
     file[position] = symbol;
-
     edit.write(file, size);
 
     edit.close();
 
     delete[] file;
+    file = nullptr;
 
     return true;
 }
@@ -303,6 +300,8 @@ bool removeByte(const char *fileName, int size)
     {
         std::cout << "File opening error!" << std::endl;
         delete[] file;
+        file = nullptr;
+
         return false;
     }
 
@@ -311,6 +310,7 @@ bool removeByte(const char *fileName, int size)
     save.close();
 
     delete[] file;
+    file = nullptr;
 
     return true;
 }
@@ -345,6 +345,8 @@ bool addByte(const char *fileName, int size)
     {
         std::cerr << "File opening error!" << std::endl;
         delete[] file;
+        file = nullptr;
+
         return false;
     }
 
@@ -353,6 +355,7 @@ bool addByte(const char *fileName, int size)
     save.close();
 
     delete[] file;
+    file = nullptr;
 
     return true;
 }
@@ -373,6 +376,8 @@ bool saveAs(const char *fileName, int size)
     {
         std::cerr << "File opening error!" << std::endl;
         delete[] file;
+        file = nullptr;
+
         return false;
     }
 
@@ -387,6 +392,7 @@ bool saveAs(const char *fileName, int size)
     load.close();
 
     delete[] file;
+    file = nullptr;
 
     return true;
 }
