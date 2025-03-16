@@ -1,0 +1,26 @@
+=== Total buildings: 3 ===
+
+[Building 1]
+Name: maika ti
+Type: Residential
+Work state: -1
+Power level: 1
+Occupation level: 1
+Location: (1, 1)
+
+[Building 2]
+Name: bashta ti
+Type: Hospital
+Work state: -1
+Power level: 1
+Occupation level: 1
+Location: (2, 2)
+
+[Building 3]
+Name: negura ti
+Type: Police
+Work state: -1
+Power level: 1
+Occupation level: 1
+Location: (3, 3)
+

@@ -1,0 +1,15 @@
+[Event 1]
+Description: maika ti
+Level: Low
+Location: (1, 1)
+
+[Event 2]
+Description: bashta ti
+Level: Medium
+Location: (2, 2)
+
+[Event 3]
+Description: negura ti
+Level: High
+Location: (3, 3)
+
