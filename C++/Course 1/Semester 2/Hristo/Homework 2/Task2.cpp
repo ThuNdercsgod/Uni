@@ -23,9 +23,10 @@ char inputChar();
 void printMenuCommands();
 void checkCommand(char const *fileName, int size);
 bool view(const char *fileName, int size);
-bool changeByte(const char *fileName, int size);
-bool removeByte(const char *fileName, int size);
-bool addByte(const char *fileName, int size);
+bool changeByte(const char *fileName, int &size);
+bool removeByte(const char *fileName, int &size);
+bool addByte(const char *fileName, int &size);
+bool saveAs(const char *fileName, int size);
 
 int main()
 {
@@ -36,7 +37,8 @@ int main()
 
     char buffer[1024];
 
-    std::ifstream load(fileName);
+    // Тук намирам размера на файла. Сигурно има и по-бърз начин, но за това се сетих
+    std::ifstream load(fileName, std::ios::binary);
 
     if (!load.is_open())
     {
@@ -44,21 +46,18 @@ int main()
         return 1;
     }
 
-    int sizeOfBuffer;
+    load.read((char *)buffer, sizeof(buffer));
+
+    int sizeOfBuffer = 0;
 
     for (int i = 0; buffer[i] != '\0'; i++)
     {
         sizeOfBuffer++;
     }
 
-    char *text = new (std::nothrow) char[sizeOfBuffer];
-
-    strcpy(text, buffer);
+    load.close();
 
     checkCommand(fileName, sizeOfBuffer);
-
-    delete[] text;
-    text = nullptr;
 
     return 0;
 }
@@ -116,8 +115,9 @@ void printMenuCommands()
     }
 }
 
-void checkCommand(char const *fileName, int size)
+void checkCommand(char const *fileName, int initialSize)
 {
+    int size = initialSize;
     char command[64];
     printMenuCommands();
 
@@ -125,7 +125,8 @@ void checkCommand(char const *fileName, int size)
     do
     {
         valid = true;
-        std::cin.clear();
+        // std::cin.clear();
+        // std::cin.ignore();
         std::cout << "Enter command: " << std::endl;
         std::cin.getline(command, 63);
 
@@ -194,7 +195,7 @@ bool view(const char *fileName, int size)
         return false;
     }
 
-    char *text = new (std::nothrow) char[size];
+    char *text = new (std::nothrow) char[size + 1];
 
     if (!text)
     {
@@ -202,8 +203,7 @@ bool view(const char *fileName, int size)
         return false;
     }
 
-    load.read((char *)text, sizeof(text));
-
+    load.read((char *)text, size);
     text[size] = '\0';
 
     for (int i = 0; text[i] != '\0'; i++)
@@ -225,7 +225,7 @@ bool view(const char *fileName, int size)
     return true;
 }
 
-bool changeByte(const char *fileName, int size)
+bool changeByte(const char *fileName, int &size)
 {
     int position = inputByte(size);
 
@@ -239,7 +239,7 @@ bool changeByte(const char *fileName, int size)
         return false;
     }
 
-    std::ifstream load(fileName);
+    std::ifstream load(fileName, std::ios::binary);
 
     if (!load.is_open())
     {
@@ -253,7 +253,7 @@ bool changeByte(const char *fileName, int size)
 
     load.close();
 
-    std::ofstream edit(fileName);
+    std::ofstream edit(fileName, std::ios::binary);
 
     if (!edit.is_open())
     {
@@ -272,7 +272,7 @@ bool changeByte(const char *fileName, int size)
     return true;
 }
 
-bool removeByte(const char *fileName, int size)
+bool removeByte(const char *fileName, int &size)
 {
     std::ifstream load(fileName);
 
@@ -290,7 +290,7 @@ bool removeByte(const char *fileName, int size)
         return false;
     }
 
-    load.read((char *)&file, size);
+    load.read((char *)file, size);
 
     load.close();
 
@@ -305,7 +305,9 @@ bool removeByte(const char *fileName, int size)
         return false;
     }
 
-    save.write(file, size - 1);
+    size--;
+
+    save.write(file, size);
 
     save.close();
 
@@ -315,15 +317,17 @@ bool removeByte(const char *fileName, int size)
     return true;
 }
 
-bool addByte(const char *fileName, int size)
+bool addByte(const char *fileName, int &size)
 {
-    std::ifstream load(fileName);
+    std::ifstream load(fileName, std::ios::binary);
 
     if (!load.is_open())
     {
         std::cerr << "File opening error!" << std::endl;
         return false;
     }
+
+    size++;
 
     char *file = new (std::nothrow) char[size + 1];
 
@@ -333,13 +337,14 @@ bool addByte(const char *fileName, int size)
         return false;
     }
 
-    load.read((char *)&file, size);
+    load.read((char *)file, size - 1);
 
     load.close();
 
-    file[size] = inputChar();
+    file[size - 1] = inputChar();
+    file[size] = '\0';
 
-    std::ofstream save(fileName);
+    std::ofstream save(fileName, std::ios::binary);
 
     if (!save.is_open())
     {
@@ -350,7 +355,7 @@ bool addByte(const char *fileName, int size)
         return false;
     }
 
-    save.write(file, size + 1);
+    save.write((const char *)file, size);
 
     save.close();
 
@@ -370,7 +375,7 @@ bool saveAs(const char *fileName, int size)
         return false;
     }
 
-    std::ifstream load(fileName);
+    std::ifstream load(fileName, std::ios::binary);
 
     if (!load.is_open())
     {
@@ -381,15 +386,27 @@ bool saveAs(const char *fileName, int size)
         return false;
     }
 
-    load.read(file, size);
+    load.read((char *)file, size);
+
+    load.close();
 
     char newFile[128];
 
     std::cout << "Enter where to save it as:" << std::endl;
-    std::cin.ignore();
     std::cin.getline(newFile, 127);
 
-    load.close();
+    std::ofstream save(newFile, std::ios::binary);
+
+    if (!save.is_open())
+    {
+        std::cout << "File opening error!";
+        delete[] file;
+        file = nullptr;
+
+        return false;
+    }
+
+    save.write(file, sizeof(file));
 
     delete[] file;
     file = nullptr;
