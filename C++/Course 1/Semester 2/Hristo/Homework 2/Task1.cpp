@@ -7,16 +7,16 @@ struct Students
     char firstName[128];
     char lastName[128];
     char email[256];
-    int fn;
+    char fn[6];
 };
 
-void checkCommand(char command[6], char input[256], char const *fileName);
+void checkCommand(char const *fileName);
 std::ifstream loadFromFile(char const *fileName);
-int inputFN();
+void inputFN(char fn[6]);
 int inputAmountStudents();
 Students inputStudentInfo();
 bool inputToFile(char const *fileName);
-Students loadStudentFromFile(char const *fileName);
+Students *loadStudentFromFile(char const *fileName, int &size);
 bool editEmail(char const *fileName, char input[256]);
 bool printContent(char input[256], char const *fileName);
 
@@ -26,44 +26,58 @@ int main()
     std::cout << "Open file:" << std::endl;
     std::cin.getline(fileName, 63);
 
-    char command[6];
-    char input[256];
-    std::cout << "Enter command:" << std::endl;
-    std::cin.getline(command, 6, ' ');
-    std::cin.ignore();
-    std::cin.getline(input, 255);
-
-    checkCommand(command, input, fileName);
+    checkCommand(fileName);
 
     return 0;
 }
 
-void checkCommand(char command[6], char input[256], char const *fileName)
+void printCommands()
+{
+    std::cout << "=== Commands ===\n"
+              << "print <faculty number>\n"
+              << "input\n"
+              << "edit <faculty number> <new email>\n"
+              << "save file" << std::endl;
+}
+
+void checkCommand(char const *fileName)
 {
     bool valid = true;
+    char command[6];
+    char input[256];
+
     do
     {
         valid = true;
+        printCommands();
+        std::cout << "Enter command:" << std::endl;
+
+        std::cin.getline(command, 6, ' ');
+        std::cin.getline(input, 255);
+
         if (strcmp(command, "print") == 0)
         {
             if (!printContent(input, fileName))
             {
-                valid = false;
+                std::cout << "Wrong input! Try again:" << std::endl;
             }
+            valid = false;
         }
         else if (strcmp(command, "input") == 0)
         {
             if (!inputToFile(fileName))
             {
-                valid = false;
+                std::cout << "Wrong input! Try again:" << std::endl;
             }
+            valid = false;
         }
         else if (strcmp(command, "edit") == 0)
         {
             if (!editEmail(fileName, input))
             {
-                valid = false;
+                std::cout << "Wrong input! Try again:" << std::endl;
             }
+            valid = false;
         }
         else if (strcmp(command, "save") == 0)
         {
@@ -93,39 +107,42 @@ std::ifstream loadFromFile(char const *fileName)
     return load;
 }
 
-int inputFN()
+void inputFN(char fn[6])
 {
-    int input;
+    char input[6];
     bool valid;
 
     do
     {
         valid = true;
-        std::cin >> input;
+        std::cin.getline(input, 5);
 
-        if (!(input >= 10000 && input < 100000))
+        for (int i = 0; i < 6; i++)
         {
-            std::cout << "Wrong input! Try again:" << std::endl;
-            std::cin.clear();
-            std::cin.ignore();
-            valid = false;
+            if (!(input[i] >= 0 && input[i] <= 9))
+            {
+                std::cout << "Wrong input! Try again:" << std::endl;
+                std::cin.clear();
+                std::cin.ignore();
+                valid = false;
+            }
         }
     } while (!valid);
 
-    return input;
+    input[5] = '\0';
 }
 
 int inputAmountStudents()
 {
     int number = 0;
     bool valid;
+    std::cout << "Enter the amount of students: ";
 
     do
     {
         valid = true;
         std::cin >> number;
 
-        std::cout << "enfdg";
         if (!(number >= 0))
         {
             std::cout << "Wrong input! Try again:" << std::endl;
@@ -153,7 +170,7 @@ Students inputStudentInfo()
     std::cin.getline(student.email, 255);
 
     std::cout << "Enter the faculty number of the student:" << std::endl;
-    student.fn = inputFN();
+    inputFN(student.fn);
 
     return student;
 }
@@ -169,28 +186,38 @@ bool inputToFile(char const *fileName)
         return false;
     }
 
-    // int amountStudents = 0;
-    // std::cout << "Enter amount of students to save:" << std::endl;
-    // std::cin.clear();
-    // std::cin.ignore();
-    // amountStudents = inputAmountStudents();
+    int amount = inputAmountStudents();
 
-    Students student = inputStudentInfo();
+    input << amount << std::endl;
 
-    input << student.firstName << " " << student.lastName
-          << ", " << student.email
-          << ", " << student.fn << std::endl;
+    Students *student = new (std::nothrow) Students[amount];
 
-    // delete[] student;
+    if (!student)
+    {
+        std::cout << "Memory allocation error!" << std::endl;
+        return false;
+    }
+
+    for (int i = 0; i < amount; i++)
+    {
+        std::cout << "Student " << i + 1 << std::endl;
+        student[i] = inputStudentInfo();
+
+        input << student[i].firstName << ", " << student[i].lastName
+              << ", " << student[i].email
+              << ", " << student[i].fn << std::endl;
+    }
+
+    delete[] student;
 
     input.close();
 
     return true;
 }
 
-Students loadStudentFromFile(char const *fileName)
+Students *loadStudentFromFile(char const *fileName, int &size)
 {
-    Students student;
+    char lineBuffer[256];
 
     std::ifstream load = loadFromFile(fileName);
 
@@ -198,24 +225,38 @@ Students loadStudentFromFile(char const *fileName)
     {
         std::cout << "File opening error!" << std::endl;
 
-        strcpy(student.firstName, "Error 1");
-        return student;
+        return nullptr;
     }
 
-    char lineBuffer[256];
-    load.getline(lineBuffer, sizeof(lineBuffer), ' ');
-    strcpy(student.firstName, lineBuffer);
+    load.getline(lineBuffer, sizeof(int));
+    sscanf(lineBuffer, "%d", &size);
 
-    load.getline(lineBuffer, sizeof(lineBuffer), ',');
-    strcpy(student.lastName, lineBuffer);
-    load.getline(lineBuffer, sizeof(lineBuffer), ' ');
+    Students *student = new (std::nothrow) Students[size];
 
-    load.getline(lineBuffer, sizeof(lineBuffer), ',');
-    strcpy(student.email, lineBuffer);
-    load.getline(lineBuffer, sizeof(lineBuffer), ' ');
+    if (!student)
+    {
+        std::cout << "Memory allocation error!" << std::endl;
 
-    load.getline(lineBuffer, sizeof(lineBuffer));
-    sscanf(lineBuffer, "%d", &student.fn);
+        return nullptr;
+    }
+
+    for (int i = 0; i < size; i++)
+    {
+        load.getline(lineBuffer, sizeof(lineBuffer), ',');
+        strcpy(student[i].firstName, lineBuffer);
+        load.getline(lineBuffer, sizeof(lineBuffer), ' ');
+
+        load.getline(lineBuffer, sizeof(lineBuffer), ',');
+        strcpy(student[i].lastName, lineBuffer);
+        load.getline(lineBuffer, sizeof(lineBuffer), ' ');
+
+        load.getline(lineBuffer, sizeof(lineBuffer), ',');
+        strcpy(student[i].email, lineBuffer);
+        load.getline(lineBuffer, sizeof(lineBuffer), ' ');
+
+        load.getline(lineBuffer, sizeof(lineBuffer));
+        strcpy(student[i].fn, lineBuffer);
+    }
 
     load.close();
 
@@ -224,7 +265,24 @@ Students loadStudentFromFile(char const *fileName)
 
 bool editEmail(char const *fileName, char input[256])
 {
-    Students student = loadStudentFromFile(fileName);
+    int size;
+    Students *student = loadStudentFromFile(fileName, size);
+    int place;
+    char searchedFN[6];
+    for (int i = 0; i < 5; i++)
+    {
+        searchedFN[i] = input[i];
+    }
+    searchedFN[5] = '\0';
+
+    for (int i = 0; i < size; i++)
+    {
+        if (strcmp(student[i].fn, searchedFN) == 0)
+        {
+            place = i;
+            break;
+        }
+    }
 
     std::ofstream edit(fileName);
 
@@ -238,11 +296,15 @@ bool editEmail(char const *fileName, char input[256])
     char *ptr = strchr(input, ' ');
     ptr++;
 
-    strcpy(student.email, ptr);
+    strcpy(student[place].email, ptr);
 
-    edit << student.firstName << " " << student.lastName
-         << ", " << student.email
-         << ", " << student.fn << std::endl;
+    edit << size + 1 << std::endl;
+    for (int i = 0; i < size; i++)
+    {
+        edit << student[i].firstName << ", " << student[i].lastName
+             << ", " << student[i].email
+             << ", " << student[i].fn << std::endl;
+    }
 
     edit.close();
 
@@ -251,17 +313,30 @@ bool editEmail(char const *fileName, char input[256])
 
 bool printContent(char input[256], char const *fileName)
 {
-    Students student = loadStudentFromFile(fileName);
+    int size;
+    Students *student = loadStudentFromFile(fileName, size);
 
-    if (strcmp(student.firstName, "Error 1") == 0)
+    int place;
+    char searchedFN[6];
+    for (int i = 0; i < 5; i++)
     {
-        return false;
+        searchedFN[i] = input[i];
+    }
+    searchedFN[5] = '\0';
+
+    for (int i = 0; i < size; i++)
+    {
+        if (strcmp(student[i].fn, searchedFN) == 0)
+        {
+            place = i;
+            break;
+        }
     }
 
-    std::cout << student.firstName << " "
-              << student.lastName << ", "
-              << student.email << ", "
-              << student.fn << std::endl;
+    std::cout << student[place].firstName << ", "
+              << student[place].lastName << ", "
+              << student[place].email << ", "
+              << student[place].fn << std::endl;
 
     return true;
 }
