@@ -14,7 +14,6 @@ int main()
     int sizeBuilding = inputNumber();
     Building *building = new Building[sizeBuilding];
 
-    // TODO finish load func
     building = BuildingsInfo::BinaryFile::load(sizeBuilding);
 
     std::cout << "Enter the amount of events: ";
@@ -29,7 +28,7 @@ int main()
     }
 
     // BuildingsInfo::input(building, sizeBuilding);
-    // EventsInfo::input(event, sizeEvent);
+    //   EventsInfo::input(event, sizeEvent);
 
     // BuildingsInfo::File::save(building, sizeBuilding);
     // EventsInfo::File::save(event, sizeEvent);
@@ -51,8 +50,8 @@ int main()
     //     return 1;
     // }
 
-    // BuildingsInfo::printInfo(building, sizeBuilding);
-    // printInfoEvent(event, sizeEvent);
+    BuildingsInfo::printInfo(building, sizeBuilding);
+    //  printInfoEvent(event, sizeEvent);
 
     delete[] building;
     building = nullptr;

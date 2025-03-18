@@ -1,7 +1,35 @@
 #include <fstream>
 #include <iostream>
 #include <cmath>
+#include "buildings.hpp"
+#include "events.hpp"
 #include "smartcity.hpp"
+
+// void printCommands()
+// {
+//     std::cout << "=== Commands ===" << std::endl;
+
+//     for (int i = Command::INPUT; i <= Command::EXIT; i++)
+//     {
+//         std::cout << i + 1 << ". " << commandNames[i] << std::endl;
+//     }
+// }
+
+// void checkCommand(int command, Building *building, Event *event)
+// {
+//     switch (command)
+//     {
+//     case 0:
+//         break;
+//     case 1:
+//     case 2:
+//     case 3:
+//     case 4:
+//     case 5:
+//     case 6:
+//     default:
+//     }
+// }
 
 int inputNumber()
 {

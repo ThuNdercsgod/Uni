@@ -114,45 +114,45 @@ bool BuildingsInfo::BinaryFile::save(Building *building, int size)
         return false;
     }
 
-    save.write("=== Total buildings: ", 22);
+    // save.write("=== Total buildings: ", 22);
     save.write((char *)&size, sizeof(size));
-    save.write(" ===\n", 6);
+    save.write(";", 1);
 
     for (int i = 0; i < size; i++)
     {
         int n = i + 1;
-        save.write("[Building ", 11);
+        // save.write("[Building ", 11);
         save.write((char *)&n, sizeof(n));
-        save.write("]\n", 3);
+        save.write(",", 1);
 
-        save.write("Name: ", 7);
-        save.write(building[i].name, strlen(building[i].name));
-        save.write("\n", 2);
+        // save.write("Name: ", 7);
+        save.write(building[i].name, sizeof(building[i].name));
+        save.write(",", 1);
 
-        save.write("Type: ", 7);
-        save.write((char *)buildingTypes[building[i].type], strlen(buildingTypes[building[i].type]));
-        save.write("\n", 2);
+        // save.write("Type: ", 7);
+        save.write((char *)&building[i].type, sizeof(building[i].type));
+        save.write(",", 1);
 
         int temp = building[i].status.workState;
-        save.write("Work state: ", 13);
+        // save.write("Work state: ", 13);
         save.write((char *)&temp, sizeof(temp));
-        save.write("\n", 2);
+        save.write(",", 1);
 
         temp = building[i].status.powerLevel;
-        save.write("Power level: ", 14);
+        // save.write("Power level: ", 14);
         save.write((char *)&temp, sizeof(temp));
-        save.write("\n", 2);
+        save.write(",", 1);
 
         temp = building[i].status.occupationLevel;
-        save.write("Occupation level: ", 19);
+        // save.write("Occupation level: ", 19);
         save.write((char *)&temp, sizeof(temp));
-        save.write("\n", 2);
+        save.write(",", 1);
 
-        save.write("Location: (", 12);
+        // save.write("Location: (", 12);
         save.write((char *)&building[i].location.x, sizeof(building[i].location.x));
-        save.write(", ", 3);
+        save.write(",", 1);
         save.write((char *)&building[i].location.y, sizeof(building[i].location.y));
-        save.write(")\n", 3);
+        save.write(";", 1);
     }
 
     save.close();
@@ -171,9 +171,6 @@ Building *BuildingsInfo::BinaryFile::load(int &sizeLoaded)
         return nullptr;
     }
 
-    char lineBuffer[256];
-
-    load.seekg(22, std::ios::beg);
     load.read((char *)&sizeLoaded, sizeof(int));
 
     Building *loadedBuilding = new (std::nothrow) Building[sizeLoaded];
@@ -184,45 +181,36 @@ Building *BuildingsInfo::BinaryFile::load(int &sizeLoaded)
         return nullptr;
     }
 
-    load.seekg(57, std::ios::beg);
+    load.seekg(5, std::ios::beg);
 
-    // TODO finish this up
+    for (int i = 0; i < sizeLoaded; i++)
+    {
+        load.seekg(5, std::ios::cur);
 
-    // int i = 0;
-    // while (load.getline(lineBuffer, 255) && i < sizeLoaded)
-    // {
-    //     if (strncmp(lineBuffer, "[Building", 9) == 0)
-    //     {
-    //         load.getline(lineBuffer, sizeof(lineBuffer));
-    //         sscanf(lineBuffer, "Name: %[^\n]", loadedBuilding[i].name);
+        load.read(loadedBuilding[i].name, sizeof(loadedBuilding[i].name));
+        load.seekg(1, std::ios::cur);
 
-    //         load.getline(lineBuffer, sizeof(lineBuffer));
-    //         char type[32];
-    //         sscanf(lineBuffer, "Type: %[^\n]", type);
-    //         for (int j = 0; j < sizeof(buildingTypes) / sizeof(buildingTypes[0]); ++j)
-    //         {
-    //             if (strcmp(type, buildingTypes[j]) == 0)
-    //             {
-    //                 loadedBuilding[i].type = (BuildingType)j;
-    //                 break;
-    //             }
-    //         }
+        load.read((char *)&loadedBuilding[i].type, sizeof(loadedBuilding[i].type));
+        load.seekg(1, std::ios::cur);
 
-    //         load.getline(lineBuffer, sizeof(lineBuffer));
-    //         // sscanf(lineBuffer, "Work state: %d", building[i].status.workState);
+        int temp = loadedBuilding[i].status.workState;
+        load.read((char *)&temp, sizeof(temp));
+        load.seekg(1, std::ios::cur);
 
-    //         load.getline(lineBuffer, sizeof(lineBuffer));
-    //         // sscanf(lineBuffer, "Power level: %d", building[i].status.powerLevel);
+        temp = loadedBuilding[i].status.powerLevel;
+        load.read((char *)&temp, sizeof(temp));
+        load.seekg(1, std::ios::cur);
 
-    //         load.getline(lineBuffer, sizeof(lineBuffer));
-    //         // sscanf(lineBuffer, "Occupation level: %d", building[i].status.occupationLevel);
+        temp = loadedBuilding[i].status.occupationLevel;
+        load.read((char *)&temp, sizeof(temp));
+        load.seekg(1, std::ios::cur);
 
-    //         load.getline(lineBuffer, sizeof(lineBuffer));
-    //         sscanf(lineBuffer, "Location: (%d, %d)", &loadedBuilding[i].location.x, &loadedBuilding[i].location.y);
+        load.read((char *)&loadedBuilding[i].location.x, sizeof(loadedBuilding[i].location.x));
+        load.seekg(1, std::ios::cur);
 
-    //         ++i;
-    //     }
-    // }
+        load.read((char *)&loadedBuilding[i].location.y, sizeof(loadedBuilding[i].location.y));
+        load.seekg(2, std::ios::cur);
+    }
 
     load.close();
 

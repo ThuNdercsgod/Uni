@@ -7,18 +7,24 @@ struct Location
     int y;
 };
 
-// enum Action
+// enum Command
 // {
-//     SEARCH,
+//     INPUT,
 //     LOAD,
 //     SAVE,
+//     LOADBINARY,
+//     SAVEBINARY,
+//     SEARCH,
 //     EXIT
 // };
 
-// const char *const actionNames[] = {"Search",
-//                                    "Load",
-//                                    "Save",
-//                                    "Exit"};
+// const char *const commandNames[] = {"Input",
+//                                     "Load",
+//                                     "Save",
+//                                     "Load binary",
+//                                     "Save binary",
+//                                     "Search",
+//                                     "Exit"};
 
 int inputNumber();
 int inputCoordinates();
