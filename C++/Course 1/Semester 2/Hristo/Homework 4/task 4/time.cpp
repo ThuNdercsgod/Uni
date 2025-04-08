@@ -78,7 +78,8 @@ bool Time::timeForDinner() const
 
 bool Time::timeToParty() const
 {
-    if (this->hours >= 23 && this->hours <= 5 ||
+    if ((this->hours >= 23 && this->hours <= 24) ||
+        (this->hours >= 0 && this->hours <= 5) ||
         (this->hours == 6 && this->minutes == 0 && this->seconds == 0))
     {
         return true;
@@ -86,28 +87,70 @@ bool Time::timeToParty() const
     return false;
 }
 
-Time Time::difference(const Time &other) const
+// Смята само разликата от по-малкия час(като число) до по-големия
+// Другия случай не съм го имплементирал
+Time Time::difference(Time &other)
 {
     Time difference;
 
     difference.hours = abs(other.hours - this->hours);
-    if (this->minutes != other.minutes)
+    if (this->minutes == 0 || other.minutes == 0)
     {
         difference.hours--;
     }
 
     difference.minutes = abs(other.minutes - this->minutes);
-    if (this->seconds != other.seconds)
+    if (this->seconds == 0 || other.seconds == 0)
     {
         difference.minutes--;
-        difference.seconds = abs(other.seconds - this->seconds);
+    }
+    difference.seconds = abs(other.seconds - this->seconds);
+
+    return difference;
+}
+
+// Връща часа, който е по-късен
+Time &Time::comparisonLate(Time &other)
+{
+    if ((this->hours > other.hours) ||
+        (other.hours == this->hours && this->minutes > other.minutes) ||
+        (other.hours == this->hours && other.minutes == this->minutes && this->seconds > other.seconds) ||
+        (other.hours == this->hours && other.minutes == this->minutes && other.seconds == this->seconds))
+    {
+        return *this;
+    }
+    else if ((other.hours > this->hours) ||
+             (other.hours == this->hours && other.minutes > this->minutes) ||
+             (other.hours == this->hours && other.minutes == this->minutes && other.seconds > this->seconds))
+    {
+        return other;
     }
     else
     {
-        difference.seconds = this->seconds;
+        return *this;
     }
+}
 
-    return difference;
+// Връща часа, който е по-ранен
+Time &Time::comparisonEarly(Time &other)
+{
+    if ((this->hours > other.hours) ||
+        (other.hours == this->hours && this->minutes > other.minutes) ||
+        (other.hours == this->hours && other.minutes == this->minutes && this->seconds > other.seconds) ||
+        (other.hours == this->hours && other.minutes == this->minutes && other.seconds == this->seconds))
+    {
+        return other;
+    }
+    else if ((other.hours > this->hours) ||
+             (other.hours == this->hours && other.minutes > this->minutes) ||
+             (other.hours == this->hours && other.minutes == this->minutes && other.seconds > this->seconds))
+    {
+        return *this;
+    }
+    else
+    {
+        return other;
+    }
 }
 
 void Time::print() const

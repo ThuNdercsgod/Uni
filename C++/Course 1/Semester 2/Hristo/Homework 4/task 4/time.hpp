@@ -11,8 +11,9 @@ public:
     bool timeForDinner() const;
     bool timeToParty() const;
 
-    Time difference(const Time &other) const;
-    Time &comparison(const Time &other) const;
+    Time difference(Time &other);
+    Time &comparisonLate(Time &other);
+    Time &comparisonEarly(Time &other);
 
     void print() const;
     void print(int hours, int minutes, int seconds) const;
