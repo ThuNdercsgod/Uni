@@ -12,7 +12,7 @@ public:
     bool valid() const;
     bool valid(int id, const char *description, bool isCompleted) const;
 
-    void print();
+    void print() const;
 
     void completeTask();
 

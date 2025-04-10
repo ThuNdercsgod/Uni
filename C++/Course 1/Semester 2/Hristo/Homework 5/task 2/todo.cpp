@@ -6,6 +6,7 @@
 Task::Task()
     : Task(0, "Default", false) {}
 
+// Might throw std::bad_alloc or std::invalid_argument
 Task::Task(int id, const char *description, bool isCompleted)
 {
     if (valid(id, description, isCompleted))
@@ -21,6 +22,7 @@ Task::Task(int id, const char *description, bool isCompleted)
     }
 }
 
+// Might throw std::bad_alloc
 Task::Task(const Task &other)
 {
     this->id = other.id;
@@ -29,6 +31,7 @@ Task::Task(const Task &other)
     this->isCompleted = other.isCompleted;
 }
 
+// Might throw std::bad_alloc
 Task &Task::operator=(const Task &other)
 {
     if (this != &other)
@@ -68,7 +71,7 @@ bool Task::valid(int id, const char *description, bool isCompleted) const
     return false;
 }
 
-void Task::print()
+void Task::print() const
 {
     std::cout << "\n=== Task " << this->id << " ===\n"
               << "Description: \"" << this->description << "\"" << std::endl;
