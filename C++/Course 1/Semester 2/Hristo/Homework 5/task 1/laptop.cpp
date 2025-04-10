@@ -7,8 +7,10 @@
 // Might throw std::bad_alloc and std::invalid_argument
 Laptop::Laptop()
 {
-    this->name = new char[strlen("Default")];
-    strcpy(this->name, "Default");
+    this->brand = new char[strlen("Default")];
+    strcpy(this->brand, "Default");
+    this->model = new char[strlen("Default")];
+    strcpy(this->model, "Default");
     this->price = 0;
     this->screenSize = 0;
     CPU cpu;
@@ -18,12 +20,14 @@ Laptop::Laptop()
 }
 
 // Might throw std::bad_alloc and std::invalid_argument
-Laptop::Laptop(const char *name, int price, int screenSize, CPU cpu, int RAM, int batteryCapacity)
+Laptop::Laptop(const char *brand, const char *model, int price, int screenSize, CPU cpu, int RAM, int batteryCapacity)
 {
-    if (valid(name, price, screenSize, cpu, RAM, batteryCapacity))
+    if (valid(brand, model, price, screenSize, cpu, RAM, batteryCapacity))
     {
-        this->name = new char[strlen(name) + 1];
-        strcpy(this->name, name);
+        this->brand = new char[strlen(brand) + 1];
+        strcpy(this->brand, brand);
+        this->model = new char[strlen(model) + 1];
+        strcpy(this->model, model);
         this->price = price;
         this->screenSize = screenSize;
         this->cpu = &cpu;
@@ -38,9 +42,11 @@ Laptop::Laptop(const char *name, int price, int screenSize, CPU cpu, int RAM, in
 
 Laptop::Laptop(const Laptop &other)
 {
-    delete[] this->name;
-    this->name = new char[strlen(other.name) + 1];
-    strcpy(this->name, other.name);
+    this->brand = new char[strlen(other.brand) + 1];
+    strcpy(this->brand, other.brand);
+
+    this->model = new char[strlen(other.model) + 1];
+    strcpy(this->model, other.model);
 
     this->price = other.price;
     this->screenSize = other.screenSize;
@@ -53,9 +59,13 @@ Laptop &Laptop::operator=(const Laptop &other)
 {
     if (this != &other)
     {
-        delete[] this->name;
-        this->name = new char[strlen(other.name) + 1];
-        strcpy(this->name, other.name);
+        delete[] this->brand;
+        this->brand = new char[strlen(other.brand) + 1];
+        strcpy(this->brand, other.brand);
+
+        delete[] this->model;
+        this->model = new char[strlen(other.model) + 1];
+        strcpy(this->model, other.model);
 
         this->price = other.price;
         this->screenSize = other.screenSize;
@@ -69,12 +79,18 @@ Laptop &Laptop::operator=(const Laptop &other)
 
 Laptop::~Laptop()
 {
-    delete[] name;
+    delete[] brand;
+    delete[] model;
 }
 
-char *Laptop::getName() const
+char *Laptop::getBrand() const
 {
-    return this->name;
+    return this->brand;
+}
+
+char *Laptop::getModel() const
+{
+    return this->model;
 }
 
 int Laptop::getPrice() const
@@ -156,7 +172,8 @@ void Laptop::setBatteryCapacity(int batteryCapacity)
 
 bool Laptop::valid() const
 {
-    if (this->name != nullptr &&
+    if (this->brand != nullptr &&
+        this->model != nullptr &&
         this->price > 0 &&
         this->screenSize > 0 &&
         this->cpu != nullptr &&
@@ -168,9 +185,10 @@ bool Laptop::valid() const
     return false;
 }
 
-bool Laptop::valid(const char *name, int price, int screenSize, CPU cpu, int RAM, int batteryCapacity) const
+bool Laptop::valid(const char *brand, const char *model, int price, int screenSize, CPU cpu, int RAM, int batteryCapacity) const
 {
-    if (name != nullptr &&
+    if (brand != nullptr &&
+        model != nullptr &&
         price > 0 &&
         screenSize > 0 &&
         &cpu != nullptr &&
@@ -184,7 +202,7 @@ bool Laptop::valid(const char *name, int price, int screenSize, CPU cpu, int RAM
 
 void Laptop::print() const
 {
-    std::cout << "\n=== Laptop " << this->name << " ===\n"
+    std::cout << "\n=== Laptop " << this->brand << " " << this->model << " ===\n"
               << "Price: " << this->price << "\n"
               << "\nScreen size: " << this->screenSize << "\n";
     this->cpu->print();

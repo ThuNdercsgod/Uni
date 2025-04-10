@@ -12,7 +12,7 @@ int main()
 
         CPU amd(3.8, 6, 32);
 
-        Laptop param("ASUS", 3000, 14, amd, 16, 73);
+        Laptop param("ASUS", "TUF", 3000, 14, amd, 16, 73);
         param.print();
 
         CPU amd2(4.2, 12, 32);
@@ -22,7 +22,7 @@ int main()
         param.setBatteryCapacity(80);
         param.print();
 
-        Laptop invalid("Lenovo", -1, 0, amd, 0, 0);
+        Laptop invalid("Lenovo", "Ideapad", -1, 0, amd, 0, 0);
     }
     catch (std::bad_alloc &e)
     {
