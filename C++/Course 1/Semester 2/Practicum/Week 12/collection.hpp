@@ -6,7 +6,7 @@ class Collection
 {
 public:
     Collection();
-    Collection(const char *name, Media **items, int numOfItems);
+    Collection(const char *name);
     Collection(const Collection &other);
     ~Collection();
 
@@ -14,12 +14,19 @@ public:
 
     void print() const;
 
-    void add();
+    void addMedia(const Media *media);
+    void removeMedia(Media *media);
+    float calculateTotalLateFees(unsigned int daysLate) const;
+    void saveToFile(const char *filName) const;
+    void loadFromFile(const char *fileName);
 
-    const char *const getName() const;
+    const char *getName() const;
 
 private:
+    void freeItems(int numOfItems);
+
     char *name;
-    Media **items;
+    // Dynamic array of pointers to Media objects that belong to this Collection
+    Media **items = nullptr;
     int numOfItems;
 };
