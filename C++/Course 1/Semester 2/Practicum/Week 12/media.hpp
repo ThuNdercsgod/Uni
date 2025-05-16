@@ -6,27 +6,31 @@ class Media
 {
 public:
     Media();
-    Media(const char *title, unsigned int id, bool available, Collection *owner);
+    Media(const char *title, unsigned int id, bool available);
     Media(const Media &other);
+    Media(std::istream &load, unsigned int id);
     virtual ~Media();
 
     Media &operator=(const Media &other);
+    bool operator==(const Media &other) const;
 
-    void print() const;
+    void displayInfo() const;
+    virtual float calculateLateFee(unsigned int daysLate) const;
+    void saveToFile(std::ostream &save) const;
 
-    char *getTitle() const;
+    const char *getTitle() const;
     unsigned int getId() const;
     bool getAvailable() const;
-    Collection *getOwner() const;
+    const Collection *getOwner() const;
 
     void setTitle(const char *title);
-    void setId(unsigned int id);
     void setAvailable(bool available);
     void setOwner(Collection *newOwner);
 
 private:
     char *title;
-    unsigned int id;
+    const unsigned int id;
     bool available;
-    Collection *owner;
+    // Pointer to the Collection it belongs
+    Collection *owner = nullptr;
 };
