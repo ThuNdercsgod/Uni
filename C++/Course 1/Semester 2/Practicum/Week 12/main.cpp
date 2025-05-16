@@ -6,15 +6,19 @@
 
 int main()
 {
-    Collection collection("Collection", nullptr, 0);
+    // Collection collection("Collection");
 
     // Media media("Book", 12345, true, &collection);
 
-    // media.print();
+    // media.displayInfo();
 
-    const char *a = collection.getName();
+    // const char *a = collection.getName();
 
-    std::cout << collection.getName();
+    char *b = new char[strlen("") + 1];
+    strcpy(b, "");
+
+    bool rtr = (b == nullptr);
+    std::cout << b;
 
     return 0;
 }
