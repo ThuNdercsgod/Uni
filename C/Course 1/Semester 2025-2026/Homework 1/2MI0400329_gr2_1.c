@@ -87,14 +87,14 @@ int main()
         (x - xo) * (x - xo) + (y - yo) * (y - yo) <= Rsq)
     {
         // => във венеца
-        if (x) // условие за в квадрат или не
+        if (1 == 0) // условие за в квадрат или не
         {
-            puts("The point is between the circumscribed and the inclined circle of the square and part of the square");
+            puts("The point is between the circumscribed and the inscribed circle of the square and part of the square");
         }
-        puts("The point is between the circumscribed and the inclined circle of the square but not part of the square");
+        puts("The point is between the circumscribed and the inscribed circle of the square but not part of the square");
     }
 
-    puts("The point is not between the circumscribed and inclined circle of the square.");
+    puts("The point is not between the circumscribed and inscribed circle of the square.");
 
     return 0;
 }
