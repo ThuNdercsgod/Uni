@@ -13,7 +13,6 @@ int main()
         b < a)
     {
         puts("Invalid input!");
-        puts("a b");
 
         return 1;
     }
