@@ -11,7 +11,9 @@ void printTable(char **table, int rows, int cols);
 void putWord(char **table, const char *word, int row, int cols, int isENG);
 void inputTable(char **table, int rows, int cols);
 
-const char *translate(const char **table, int rows, int cols, const char *sentence);
+int addSpaces(const char *sentence, char *translated, int posSent);
+int wordTranslate(char **table, int rows, int cols, const char *sentence, char *translated, int posSent);
+char *translate(char **table, int rows, int cols, const char *sentence);
 
 int main()
 {
@@ -43,10 +45,20 @@ int main()
     {
         sentence[strlen(sentence) - 1] = '\0';
     }
+    strlwr(sentence);
+
+    char *translated = translate(table, rows, cols, sentence);
+    if (!translated)
+    {
+        return 2;
+    }
+
+    puts(translated);
 
     // printTable(table, rows, cols);
 
     clearTable(table, rows);
+    free(translated);
 
     return 0;
 }
@@ -149,10 +161,111 @@ void inputTable(char **table, int rows, int cols)
     }
 }
 
-const char *translate(const char **table, int rows, int cols, const char *sentence)
+int addSpaces(const char *sentence, char *translated, int posSent)
 {
-    int count = 0;
-    while (sentence[count] != ' ' && sentence[count] != ',' && sentence[count] != '.')
+    int posTransl = strlen(translated);
+
+    while (sentence[posSent] == ' ' ||
+           sentence[posSent] == ',' ||
+           sentence[posSent] == '.' ||
+           sentence[posSent] == '\n')
     {
+        if (posTransl >= CAP)
+        {
+            puts("Sentence too long to translate!");
+            return -1;
         }
+
+        translated[posTransl] = sentence[posSent];
+
+        posTransl++;
+        posSent++;
+
+        translated[posTransl] = '\0';
+    }
+
+    return posSent;
+}
+
+int wordTranslate(char **table, int rows, int cols, const char *sentence, char *translated, int posSent)
+{
+    char wordBG[cols / 2];
+    int posWord = 0;
+
+    while (sentence[posSent] != ' ' &&
+           sentence[posSent] != ',' &&
+           sentence[posSent] != '.' &&
+           sentence[posSent] != '\n' &&
+           sentence[posSent] != '\0')
+    {
+        if (posSent >= CAP)
+        {
+            puts("Sentence too long to translate!");
+            return -1;
+        }
+
+        wordBG[posWord] = sentence[posSent];
+        posSent++;
+        posWord++;
+    }
+    wordBG[posWord] = '\0';
+
+    int rowOfTable = 0;
+    while (strcmp(wordBG, table[rowOfTable]) != 0)
+    {
+        if (rowOfTable >= rows)
+        {
+            strcat(translated, wordBG);
+            return posSent;
+        }
+        rowOfTable++;
+    }
+
+    char wordENG[cols / 2];
+    for (int i = 0; i < cols / 2; ++i)
+    {
+        wordENG[i] = table[rowOfTable][i + 16];
+        if (table[rowOfTable][i + 16] == '\0')
+        {
+            break;
+        }
+    }
+
+    strcat(translated, wordENG);
+
+    return posSent;
+}
+
+char *translate(char **table, int rows, int cols, const char *sentence)
+{
+    int posSent = 0;
+    char translated[CAP];
+    translated[0] = '\0';
+
+    while (sentence[posSent] != '\0')
+    {
+        posSent = wordTranslate(table, rows, cols, sentence, translated, posSent);
+        if (posSent == -1)
+        {
+            return NULL;
+        }
+
+        posSent = addSpaces(sentence, translated, posSent);
+        if (posSent == -1)
+        {
+            return NULL;
+        }
+    }
+
+    char *transl = (char *)malloc((strlen(translated) + 1) * sizeof(char));
+    if (!transl)
+    {
+        puts("Memory allocation error!");
+        return NULL;
+    }
+    transl[0] = '\0';
+
+    strcat(transl, translated);
+
+    return transl;
 }
