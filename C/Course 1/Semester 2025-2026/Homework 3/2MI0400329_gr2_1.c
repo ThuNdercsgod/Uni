@@ -50,6 +50,7 @@ int main()
     char *translated = translate(table, rows, cols, sentence);
     if (!translated)
     {
+        clearTable(table, rows);
         return 2;
     }
 
@@ -73,12 +74,13 @@ char **createTable(int rows, int cols)
 
     for (int i = 0; i < rows; ++i)
     {
-        table[i] = (char *)malloc(cols * sizeof(char));
-        if (!table[i])
+        char *row = (char *)malloc(cols * sizeof(char));
+        if (!row)
         {
             clearTable(table, i);
             return NULL;
         }
+        table[i] = row;
     }
 
     return table;
